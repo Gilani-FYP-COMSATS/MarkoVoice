@@ -289,9 +289,9 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
           className='btn btn-primary my-1'
           onSubmit={(e) => onSubmit(e)}
         />
-        <Link className='btn btn-light my-1' to='/dashboard'>
+        <a className='btn btn-light my-1' href='dashboard.html'>
           Go Back
-        </Link>
+        </a>
       </form>
     </Fragment>
   );

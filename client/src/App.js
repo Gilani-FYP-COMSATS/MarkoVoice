@@ -7,6 +7,8 @@ import Register from './components/auth/Register';
 import Alert from './components/layout/Alert';
 import Dashboard from './components/dashboard/Dashboard';
 import CreateConfiguration from './components/configuration-forms/CreateConfiguration';
+import EditConfiguration from './components/configuration-forms/EditConfiguration';
+import AddDomainInfo from './components/configuration-forms/AddDomainInfo';
 
 //Redux
 import { Provider } from 'react-redux';
@@ -40,6 +42,12 @@ const App = () => {
                 path='/create-configuration'
                 component={CreateConfiguration}
               />
+              <Route
+                exact
+                path='/edit-configuration'
+                component={EditConfiguration}
+              />
+              <Route exact path='/add-domainInfo' component={AddDomainInfo} />
             </Switch>
           </section>
         </Fragment>

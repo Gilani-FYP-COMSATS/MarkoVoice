@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -59,7 +59,7 @@ export const register = ({ name, email, password }) => async (dispatch) => {
   }
 };
 
-//Login user
+//Login use
 export const login = (email, password) => async (dispatch) => {
   const config = {
     headers: {
@@ -70,14 +70,13 @@ export const login = (email, password) => async (dispatch) => {
   const body = JSON.stringify({ email, password });
 
   try {
-    console.log('before post');
+    //console.log('before post');
     const res = await axios.post('/api/auth', body, config);
-    console.log('before dispatch');
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data,
     });
-    console.log('before dispatch user');
+    //console.log('before dispatch user');
     dispatch(loadUser());
   } catch (error) {
     console.log('error occured while login');
@@ -92,11 +91,11 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 // logout, clear profile
-export const logout = () => (dispatch) => {
+export const logout = (history) => async (dispatch) => {
   // make user log out and set post conditions
   dispatch({ type: LOGOUT });
   // also clear configuration data when user logged out!
   dispatch({ type: CLEAR_CONFIGURATION });
 
-  //dispatch(<Redirect to='/Landing' />);
+  history.push('/dashboard');
 };

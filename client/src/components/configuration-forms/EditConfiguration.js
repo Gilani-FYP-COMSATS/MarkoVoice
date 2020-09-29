@@ -1,10 +1,18 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { createConfiguration } from '../../actions/configuration';
+import {
+  createConfiguration,
+  getCurrentConfiguration,
+} from '../../actions/configuration';
 
-const CreateConfiguration = ({ createConfiguration, history }) => {
+const EditConfiguration = ({
+  configuration: { configuration, loading },
+  createConfiguration,
+  getCurrentConfiguration,
+  history,
+}) => {
   const [formData, setFormData] = useState({
     businessName: '',
     businessDescription: '',
@@ -27,6 +35,75 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
     scriptSequence: '',
   });
 
+  useEffect(() => {
+    getCurrentConfiguration();
+
+    setFormData({
+      //--------------------- businessInfo --------------------------------
+      businessName:
+        loading || !configuration.businessInfo
+          ? ''
+          : configuration.businessInfo.businessName,
+      businessDescription:
+        loading || !configuration.businessInfo
+          ? ''
+          : configuration.businessInfo.businessDescription,
+      areaOfOperatingBusiness:
+        loading || !configuration.businessInfo
+          ? ''
+          : configuration.businessInfo.areaOfOperatingBusiness,
+      businessEmail:
+        loading || !configuration.businessInfo
+          ? ''
+          : configuration.businessInfo.businessEmail,
+      phone:
+        loading || !configuration.businessInfo
+          ? ''
+          : configuration.businessInfo.phone,
+      //--------------------- bot info --------------------------------
+      domain: loading || !configuration.domain ? '' : configuration.domain,
+      botVoice:
+        loading || !configuration.botVoice ? '' : configuration.botVoice,
+      scriptSequence:
+        loading || !configuration.scriptSequence
+          ? ''
+          : configuration.scriptSequence,
+      //-------------------------------domain Info-----------------------
+      sellBuyRent:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].sellBuyRent, //.sellBuyRent,
+      propertyType:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].propertyType, //.propertyType,
+      size:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].size,
+      locationCity:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].locationCity,
+      locationAddress:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].locationAddress,
+      bedRooms:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].bedRooms,
+      kitchen:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].kitchen,
+      garage:
+        loading || !configuration.domainInfo
+          ? ''
+          : configuration.domainInfo[0].garage,
+    });
+  }, [loading]);
+
   const {
     businessName,
     businessDescription,
@@ -35,6 +112,8 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
     phone,
 
     domain,
+    botVoice,
+    scriptSequence,
 
     sellBuyRent,
     propertyType,
@@ -44,27 +123,24 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
     bedRooms,
     kitchen,
     garage,
-
-    botVoice,
-    scriptSequence,
   } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = (e) => {
+    //console.log('inside onSubmit: EditConfiguration: formData: ' + data);
     e.preventDefault();
-    createConfiguration(formData, history);
+    createConfiguration(formData, history, true);
   };
 
   return (
     <Fragment>
       <h1 className='large text-primary'>
-        <i className='fas fa-cogs'></i>Configure Your Bot
+        <i className='fas fa-cogs'></i> Edit Configuration
       </h1>
       <p className='lead'>
-        <i className='fas fa-briefcase'></i> First, Let's get some necessary
-        information.
+        <i className='fas fa-briefcase'></i> Your Business Information
       </p>
       <form className='form' onSubmit={(e) => onSubmit(e)}>
         <div className='form-group'>
@@ -142,6 +218,7 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
             other domains soon
           </small>
         </div>
+
         <p className='lead'>
           <i className='fas fa-microphone-alt'></i> Bot operating voice
         </p>
@@ -174,9 +251,9 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
             once communication starts, what script would like to execute.
           </small>
         </div>
+        {/* ----------------------- domain Info --------------------------- */}
         <p className='lead'>
-          <i className='fas fa-home'></i> Time to get information of property
-          you actually want to sell/buy.
+          <i className='fas fa-home'></i> Details of your property
         </p>
         <div className='form-group'>
           <select
@@ -198,7 +275,7 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
             value={propertyType}
             onChange={(e) => onChange(e)}
           >
-            <option value='0'>Property Type</option>
+            <option value='0'>*Property Type</option>
             <option value='House'>House</option>
             <option value='Flat'>Flat</option>
             <option value='FarmHouse'>FarmHouse</option>
@@ -289,20 +366,23 @@ const CreateConfiguration = ({ createConfiguration, history }) => {
           className='btn btn-primary my-1'
           onSubmit={(e) => onSubmit(e)}
         />
-        <a className='btn btn-light my-1' href='dashboard.html'>
+        <Link className='btn btn-light my-1' to='/dashboard'>
           Go Back
-        </a>
+        </Link>
       </form>
     </Fragment>
   );
 };
 
-CreateConfiguration.propTypes = {
+EditConfiguration.propTypes = {
   createConfiguration: PropTypes.func.isRequired,
+  getCurrentConfiguration: PropTypes.func.isRequired,
+  configuration: PropTypes.object.isRequired,
 };
-// const mapStateToProps = state => ({
-
-// })
-export default connect(null, { createConfiguration })(
-  withRouter(CreateConfiguration)
-);
+const mapStateToProps = (state) => ({
+  configuration: state.configuration,
+});
+export default connect(mapStateToProps, {
+  createConfiguration,
+  getCurrentConfiguration,
+})(withRouter(EditConfiguration));

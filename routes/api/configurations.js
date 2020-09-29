@@ -17,7 +17,7 @@ router.post(
     auth,
     [
       check('businessName', 'business Name is required').not().isEmpty(),
-      check('scriptSequence', 'scriptSequence is required').not().isEmpty(),
+      //check('scriptSequence', 'scriptSequence is required').not().isEmpty(),
     ],
   ],
 
@@ -25,8 +25,9 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
+      //return res.status(400).json({ errors: errors.msg });
     }
-    console.log('async starts');
+
     const {
       package,
       domain,
@@ -63,7 +64,6 @@ router.post(
       inputFields.businessInfo.areaOfOperatingBusiness = areaOfOperatingBusiness;
     if (businessEmail) inputFields.businessInfo.businessEmail = businessEmail;
     if (phone) inputFields.businessInfo.phone = phone;
-    inputFields.domainInfo = []; // filling domainInfo ...................
     const newDomainInfo = {
       sellBuyRent,
       propertyType,
@@ -74,10 +74,13 @@ router.post(
       kitchen,
       garage,
     };
-    if (newDomainInfo) inputFields.domainInfo.unshift(newDomainInfo);
+    if (sellBuyRent || propertyType || size || locationCity) {
+      inputFields.domainInfo = [];
+      inputFields.domainInfo.unshift(newDomainInfo);
+    } // filling domainInfo ...................
+
     try {
-      console.log('inside try, congig route');
-      //Later before storing configuration, check if this user has already configured
+      console.log('try starts, config route');
       let configuration = await ConfigurationModel.findOne({
         user: req.user.id,
       });
@@ -89,13 +92,13 @@ router.post(
           { $set: inputFields },
           { new: true }
         );
-        console.log('configuration updates: ' + configuration);
+        //console.log('configuration updates: ' + configuration);
         return res.json(configuration);
       }
-      //creare new confif, if dont exit already
+      //creare new config, if dont exit already
       configuration = new ConfigurationModel(inputFields);
       await configuration.save();
-      console.log('New configuration Created: ' + configuration);
+      //console.log('New configuration Created: ' + configuration);
       return res.status(200).json(configuration);
     } catch (err) {
       res
@@ -136,9 +139,10 @@ router.get('/me', auth, async (req, res) => {
     }).populate('user', ['name', 'email']);
 
     if (configurations == null) {
+      console.log('inside if');
       return res.json(configurations);
     }
-    console.log('outside if');
+    // console.log('outside if');
     res.json(configurations);
   } catch (error) {
     console.error(error.message);
@@ -214,8 +218,6 @@ router.put(
     };
 
     try {
-      console.log('try starts');
-
       let configuration = await ConfigurationModel.findOne({
         user: req.user.id,
       });

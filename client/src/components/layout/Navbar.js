@@ -5,6 +5,10 @@ import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
 
 const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    logout(history);
+  };
   const authLinks = (
     <ul>
       <li>
@@ -14,10 +18,10 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
         </Link>
       </li>
       <li>
-        <a onClick={logout} href='#!'>
+        <Link onClick={(e) => onSubmit(e)} to='/dashboard'>
           <i className='fas fa-sign-out-alt' />{' '}
           <span className='hide-sm'>Logout</span>
-        </a>
+        </Link>
       </li>
     </ul>
   );

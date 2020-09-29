@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 import { getCurrentConfiguration } from '../../actions/configuration';
+import DashboardActions from './DashboardActions';
 
 const Dashboard = ({
   getCurrentConfiguration,
@@ -23,7 +24,9 @@ const Dashboard = ({
         <i className='fas fa-user '></i> Welcome {auth.user && auth.user.name}
       </p>
       {configuration !== null ? (
-        <Fragment>has Configuration</Fragment>
+        <Fragment>
+          <DashboardActions />
+        </Fragment>
       ) : (
         <Fragment>
           <p>
@@ -41,7 +44,7 @@ const Dashboard = ({
 Dashboard.propTypes = {
   getCurrentConfiguration: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
+  configuration: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

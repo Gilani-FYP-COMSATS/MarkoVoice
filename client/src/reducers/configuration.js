@@ -2,6 +2,7 @@ import {
   CONFIGURATION_ERROR,
   GET_CONFIGURATION,
   CLEAR_CONFIGURATION,
+  UPDATE_CONFIGURATION,
 } from '../actions/types';
 
 const initialState = {
@@ -17,6 +18,7 @@ export default function (state = initialState, action) {
 
   switch (type) {
     case GET_CONFIGURATION:
+    case UPDATE_CONFIGURATION:
       return {
         ...state,
         configuration: payload,
